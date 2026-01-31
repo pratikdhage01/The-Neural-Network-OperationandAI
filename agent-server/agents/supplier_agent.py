@@ -194,7 +194,9 @@ def format_pending_queries(queries: list) -> str:
 async def process_supplier_response(state: AgentState, response: str):
     """Process supplier response, update inventory, propagate to other suppliers, notify customer."""
     supplier_id = state.get("supplier_id")
+    print(f"🔍 DEBUG process_supplier_response: supplier_id={supplier_id}")
     if not supplier_id:
+        print("⚠️ DEBUG: No supplier_id in state, returning early")
         return
     
     queries_collection = database.get_collection("supplier_queries")
@@ -259,8 +261,14 @@ Only respond with the JSON, no other text."""
     print(f"📊 Extracted from supplier: available={is_available}, qty={quantity_provided}, delivery={delivery_days}d, price=₹{price}")
     
     if not is_available:
+        # Get the queries for this supplier BEFORE marking them unavailable (to get order info)
+        queries_for_supplier = await queries_collection.find({
+            "supplier_id": supplier_id,
+            "status": "pending"
+        }).to_list(50)
+        
         # Mark this supplier's queries as unavailable
-        await queries_collection.update_many(
+        result = await queries_collection.update_many(
             {"supplier_id": supplier_id, "status": "pending"},
             {
                 "$set": {
@@ -271,6 +279,44 @@ Only respond with the JSON, no other text."""
             }
         )
         print(f"❌ Supplier {supplier_id} has no stock available")
+        
+        # For each query that was just marked unavailable, check if ALL suppliers have now declined
+        for query in queries_for_supplier:
+            order_id = query.get("order_id")
+            product_id = query.get("product_id")
+            order_number = query.get("order_number")
+            product_name = query.get("product_name")
+            quantity_needed = query.get("quantity_needed", 0)
+            customer_conversation_id = query.get("conversation_id")
+            
+            # Check if there are still pending queries for this order+product
+            still_pending = await queries_collection.count_documents({
+                "order_id": order_id,
+                "product_id": product_id,
+                "status": "pending"
+            })
+            
+            # Check if there are any successful (available) queries for this order+product
+            has_available = await queries_collection.count_documents({
+                "order_id": order_id,
+                "product_id": product_id,
+                "status": "available"
+            })
+            
+            # If no pending queries and no available suppliers, all have declined
+            if still_pending == 0 and has_available == 0:
+                print(f"💔 All suppliers declined for {product_name} (Order {order_number})")
+                
+                # Notify customer that order cannot be fulfilled
+                await notify_customer_order_unfulfillable(
+                    customer_conversation_id=customer_conversation_id,
+                    order_number=order_number,
+                    product_name=product_name,
+                    quantity_needed=quantity_needed,
+                    conversations_collection=conversations_collection,
+                    orders_collection=orders_collection
+                )
+        
         return
     
     # Get pending queries for this supplier
@@ -547,6 +593,75 @@ If you have any questions, feel free to ask. 😊"""
             }
         )
         print(f"📧 Customer notified about order {order_number} being ready!")
+
+
+async def notify_customer_order_unfulfillable(
+    customer_conversation_id: str,
+    order_number: str,
+    product_name: str,
+    quantity_needed: int,
+    conversations_collection,
+    orders_collection
+):
+    """Send message to customer that their order cannot be fulfilled due to no supplier availability."""
+    customer_message = f"""😔 **Important Update About Your Order**
+
+Hi! We need to inform you about your order **{order_number}**.
+
+Unfortunately, we were unable to source **{quantity_needed} units of {product_name}** from our suppliers at this time.
+
+❌ **Status:** Order cannot be fulfilled currently
+
+**What happens next:**
+- Your order has been marked as unfulfillable
+- No payment will be processed
+- We'll notify you when this product becomes available again
+
+We sincerely apologize for the inconvenience. Would you like us to:
+1. Notify you when this product is back in stock?
+2. Suggest alternative products?
+3. Help you with something else?
+
+Please let us know how we can assist you. 🙏"""
+
+    # Find and update customer conversation
+    customer_conv = await conversations_collection.find_one({
+        "conversation_id": customer_conversation_id
+    })
+    
+    if customer_conv:
+        await conversations_collection.update_one(
+            {"_id": customer_conv["_id"]},
+            {
+                "$push": {
+                    "messages": {
+                        "role": "assistant",
+                        "content": customer_message,
+                        "timestamp": datetime.utcnow(),
+                        "metadata": {"type": "order_unfulfillable", "order_number": order_number}
+                    }
+                },
+                "$set": {"updated_at": datetime.utcnow()}
+            }
+        )
+    
+    # Update order status to cancelled/unfulfillable
+    from bson import ObjectId
+    # We need to find the order by order_number since we may not have order_id here
+    order = await orders_collection.find_one({"order_number": order_number})
+    if order:
+        await orders_collection.update_one(
+            {"_id": order["_id"]},
+            {
+                "$set": {
+                    "status": "cancelled",
+                    "cancellation_reason": f"Unable to source {product_name} from suppliers",
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+    
+    print(f"📧 Customer notified: Order {order_number} cannot be fulfilled")
 
 
 async def create_supplier_delay_bottleneck(queries: list):

@@ -87,7 +87,7 @@ async def run_agent(
     Returns:
         dict with response and conversation_id
     """
-    from langchain_core.messages import HumanMessage
+    from langchain_core.messages import HumanMessage, AIMessage
     
     # Generate or use existing conversation ID
     if not conversation_id:
@@ -96,18 +96,45 @@ async def run_agent(
     # Load existing conversation state or create new
     config = {"configurable": {"thread_id": conversation_id}}
     
-    # Get current state if exists
+    # First, load existing messages from database (if any)
+    conversations_collection = database.get_collection("conversations")
+    existing_conv = await conversations_collection.find_one({"conversation_id": conversation_id})
+    
+    # Convert database messages to langchain format
+    existing_messages = []
+    restored_supplier_id = None
+    if existing_conv:
+        # Restore supplier_id from the existing conversation if it exists
+        restored_supplier_id = existing_conv.get("supplier_id")
+        print(f"🔍 DEBUG: Restored supplier_id={restored_supplier_id} from conversation {conversation_id}")
+        
+        for msg in existing_conv.get("messages", []):
+            role = msg.get("role", "")
+            content = msg.get("content", "")
+            if role == "user":
+                existing_messages.append(HumanMessage(content=content))
+            elif role == "assistant":
+                existing_messages.append(AIMessage(content=content))
+    
+    # Use restored supplier_id if available, otherwise use the one passed to the function
+    effective_supplier_id = restored_supplier_id or supplier_id
+    
+    # Get current state if exists in memory, otherwise create new
     try:
         current_state = agent_graph.get_state(config)
         if current_state.values:
             state = dict(current_state.values)
-            state["messages"] = state.get("messages", []) + [HumanMessage(content=message)]
+            # Merge database messages with in-memory messages, preferring database as source of truth
+            state["messages"] = existing_messages + [HumanMessage(content=message)]
+            # Ensure supplier_id is set correctly
+            if effective_supplier_id:
+                state["supplier_id"] = effective_supplier_id
         else:
-            state = create_initial_state(conversation_id, conversation_type, supplier_id)
-            state["messages"] = [HumanMessage(content=message)]
+            state = create_initial_state(conversation_id, conversation_type, effective_supplier_id)
+            state["messages"] = existing_messages + [HumanMessage(content=message)]
     except Exception:
-        state = create_initial_state(conversation_id, conversation_type, supplier_id)
-        state["messages"] = [HumanMessage(content=message)]
+        state = create_initial_state(conversation_id, conversation_type, effective_supplier_id)
+        state["messages"] = existing_messages + [HumanMessage(content=message)]
     
     # Run the graph
     result = await agent_graph.ainvoke(state, config)
@@ -144,18 +171,32 @@ async def save_conversation(
     messages: list,
     context: dict
 ):
-    """Save or update conversation in database."""
+    """Save or update conversation in database, preserving existing messages."""
     conversations_collection = database.get_collection("conversations")
     
-    # Convert messages to serializable format
-    serialized_messages = []
+    # First, get existing conversation to preserve existing messages
+    existing_conv = await conversations_collection.find_one({"conversation_id": conversation_id})
+    existing_messages = existing_conv.get("messages", []) if existing_conv else []
+    
+    # Convert new messages to serializable format
+    serialized_new_messages = []
     for msg in messages:
         if hasattr(msg, 'type') and hasattr(msg, 'content'):
-            serialized_messages.append({
+            serialized_new_messages.append({
                 "role": "user" if msg.type == "human" else "assistant",
                 "content": msg.content,
                 "timestamp": datetime.utcnow()
             })
+    
+    # Merge messages: keep existing + add truly new messages
+    # A message is "new" if its content doesn't already exist in the conversation
+    existing_contents = {m.get("content", "") for m in existing_messages}
+    final_messages = list(existing_messages)  # Start with existing
+    
+    for new_msg in serialized_new_messages:
+        if new_msg["content"] not in existing_contents:
+            final_messages.append(new_msg)
+            existing_contents.add(new_msg["content"])
     
     await conversations_collection.update_one(
         {"conversation_id": conversation_id},
@@ -164,7 +205,7 @@ async def save_conversation(
                 "conversation_id": conversation_id,
                 "type": conversation_type,
                 "supplier_id": supplier_id,
-                "messages": serialized_messages,
+                "messages": final_messages,
                 "context": context,
                 "is_active": True,
                 "updated_at": datetime.utcnow()
