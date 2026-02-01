@@ -38,9 +38,13 @@ async def set_sales_context(context: str) -> dict:
     return {"success": True, "message": "Context set successfully"}
 
 
-async def load_leads(leads: list) -> dict:
+async def load_leads(leads: list, clear_existing: bool = True) -> dict:
     """Load leads into the system and store in database."""
     leads_collection = database.get_collection("leads")
+    
+    # Clear existing leads from database if requested
+    if clear_existing:
+        await leads_collection.delete_many({})
     
     # Clear existing leads state
     leads_state["leads"] = leads
@@ -50,27 +54,25 @@ async def load_leads(leads: list) -> dict:
     
     # Store leads in database
     for lead in leads:
-        existing = await leads_collection.find_one({"lead_id": lead.get("client_id", lead.get("lead_id"))})
-        if not existing:
-            lead_doc = {
-                "lead_id": lead.get("client_id", lead.get("lead_id")),
-                "name": lead.get("name"),
-                "email": lead.get("email"),
-                "phone": lead.get("phone"),
-                "company": lead.get("company"),
-                "industry": lead.get("industry"),
-                "role": lead.get("role", ""),
-                "status": "pending",
-                "is_potential": False,
-                "conversation_summary": "",
-                "created_at": datetime.utcnow(),
-                "updated_at": datetime.utcnow()
-            }
-            await leads_collection.insert_one(lead_doc)
+        lead_doc = {
+            "lead_id": lead.get("client_id", lead.get("lead_id")),
+            "name": lead.get("name"),
+            "email": lead.get("email"),
+            "phone": lead.get("phone"),
+            "company": lead.get("company"),
+            "industry": lead.get("industry"),
+            "role": lead.get("role", ""),
+            "status": "pending",
+            "is_potential": False,
+            "conversation_summary": "",
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        await leads_collection.insert_one(lead_doc)
     
     return {
         "success": True,
-        "message": f"Loaded {len(leads)} leads",
+        "message": f"Loaded {len(leads)} leads (cleared previous)",
         "total_leads": len(leads)
     }
 

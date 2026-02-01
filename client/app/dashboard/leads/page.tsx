@@ -345,7 +345,7 @@ export default function LeadsPage() {
                                     className="bg-green-600 hover:bg-green-700"
                                 >
                                     <Upload className="h-4 w-4 mr-2" />
-                                    Load Demo (5 Leads)
+                                    {allLeads.length > 0 ? 'Reload Demo (5 Leads)' : 'Load Demo (5 Leads)'}
                                 </Button>
                             </CardContent>
                         </Card>
