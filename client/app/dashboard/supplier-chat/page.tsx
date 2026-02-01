@@ -143,7 +143,7 @@ export default function SupplierChatPage() {
                                             <p className="text-xs text-zinc-500">{supplier.contact_person}</p>
                                             <div className="flex flex-wrap gap-1 mt-2">
                                                 {supplier.categories.slice(0, 2).map((cat) => (
-                                                    <Badge key={cat} variant="outline" className="text-xs border-zinc-700">
+                                                    <Badge key={cat} variant="outline" className="text-xs text-white/50 border-zinc-700">
                                                         {cat.replace('_', ' ')}
                                                     </Badge>
                                                 ))}

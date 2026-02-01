@@ -124,7 +124,7 @@ export default function OrdersPage() {
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="text-lg font-medium text-white">All Orders</CardTitle>
                         <Select value={filter} onValueChange={setFilter}>
-                            <SelectTrigger className="w-40 bg-zinc-800 border-zinc-700">
+                            <SelectTrigger className="w-40 text-white bg-zinc-800 border-zinc-700">
                                 <SelectValue placeholder="Filter by status" />
                             </SelectTrigger>
                             <SelectContent>
@@ -186,7 +186,7 @@ export default function OrdersPage() {
                                                         value={order.status}
                                                         onValueChange={(value) => handleStatusUpdate(order._id, value)}
                                                     >
-                                                        <SelectTrigger className="w-32 h-8 bg-zinc-800 border-zinc-700 text-xs">
+                                                        <SelectTrigger className="w-32 h-8 text-white bg-zinc-800 border-zinc-700 text-xs">
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                         <SelectContent>

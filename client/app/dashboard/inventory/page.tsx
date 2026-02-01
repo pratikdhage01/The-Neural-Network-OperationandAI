@@ -139,16 +139,16 @@ export default function InventoryPage() {
                     <CardHeader>
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
                             <TabsList className="bg-zinc-800">
-                                <TabsTrigger value="all">All Products</TabsTrigger>
-                                <TabsTrigger value="jewelry">
+                                <TabsTrigger value="all" className='text-white/50'>All Products</TabsTrigger>
+                                <TabsTrigger value="jewelry" className='text-white/50'>
                                     <Gem className="h-4 w-4 mr-1" />
-                                    Jewelry
+                                    Jewelry 
                                 </TabsTrigger>
-                                <TabsTrigger value="kitchen_appliances">
+                                <TabsTrigger value="kitchen_appliances" className='text-white/50'>
                                     <UtensilsCrossed className="h-4 w-4 mr-1" />
                                     Kitchen
                                 </TabsTrigger>
-                                <TabsTrigger value="makeup">
+                                <TabsTrigger value="makeup" className='text-white/50'>
                                     <Sparkles className="h-4 w-4 mr-1" />
                                     Makeup
                                 </TabsTrigger>

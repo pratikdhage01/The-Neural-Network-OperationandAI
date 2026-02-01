@@ -213,7 +213,7 @@ export default function BottlenecksPage() {
                                                                         <p className="text-xs text-zinc-500 mb-1">Affected Resources:</p>
                                                                         <div className="flex flex-wrap gap-1">
                                                                             {bn.affected_resources.slice(0, 3).map((res, i) => (
-                                                                                <Badge key={i} variant="outline" className="text-xs border-zinc-700">
+                                                                                <Badge key={i} variant="outline" className="text-xs text-white/50 border-zinc-700">
                                                                                     {res}
                                                                                 </Badge>
                                                                             ))}

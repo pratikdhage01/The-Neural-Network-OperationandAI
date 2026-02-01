@@ -215,7 +215,7 @@ export default function StaffPage() {
                                                 <TableCell className="text-white">{member.name}</TableCell>
                                                 <TableCell className="text-zinc-300">{task.description}</TableCell>
                                                 <TableCell>
-                                                    <Badge variant="outline" className="border-zinc-700">
+                                                    <Badge variant="outline" className="border-zinc-700 text-white/50">
                                                         P{task.priority}
                                                     </Badge>
                                                 </TableCell>
