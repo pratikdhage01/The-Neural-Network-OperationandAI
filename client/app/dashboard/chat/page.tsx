@@ -107,26 +107,25 @@ export default function ChatPage() {
         <div className="h-screen flex flex-col overflow-hidden">
             <Header title="Consumer Chat" subtitle="AI-powered customer service" />
 
-            <div className="p-6 flex-1 overflow-hidden">
+            <div className="p-6 flex-1 overflow-hidden min-h-0">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
                     {/* Conversations List */}
-                    <Card className="bg-zinc-900/50 border-zinc-800">
+                    <Card className="bg-zinc-900/50 border-zinc-800 flex flex-col overflow-hidden">
                         {/* WhatsApp QR Section */}
-                        <div className="p-4 border-b border-zinc-800">
+                        <div className="p-3 border-b border-zinc-800 shrink-0">
                             <div className="text-center">
-                                <p className="text-xs text-zinc-400 mb-2">Scan to chat via WhatsApp</p>
-                                <div className="bg-white rounded-lg p-2 inline-block">
+                                <p className="text-xs text-zinc-400 mb-1">Scan to chat via WhatsApp</p>
+                                <div className="bg-white rounded-lg p-1.5 inline-block">
                                     <img
                                         src="/qr twilio.svg"
                                         alt="WhatsApp QR Code"
-                                        className="w-32 h-32"
+                                        className="w-20 h-20"
                                     />
                                 </div>
-                                <p className="text-xs text-zinc-500 mt-2">Or use the chat below</p>
                             </div>
                         </div>
 
-                        <CardHeader className="pb-2">
+                        <CardHeader className="pb-2 shrink-0">
                             <div className="flex items-center justify-between">
                                 <CardTitle className="text-lg font-medium text-white">Conversations</CardTitle>
                                 <Button size="icon" variant="ghost" onClick={startNewConversation}>
@@ -134,8 +133,8 @@ export default function ChatPage() {
                                 </Button>
                             </div>
                         </CardHeader>
-                        <CardContent>
-                            <ScrollArea className="h-[calc(100vh-24rem)]">
+                        <CardContent className="flex-1 overflow-hidden min-h-0 p-4 pt-0">
+                            <ScrollArea className="h-full">
                                 <div className="space-y-2">
                                     {conversations.map((conv) => (
                                         <div
@@ -169,7 +168,7 @@ export default function ChatPage() {
                     </Card>
 
                     {/* Chat Area */}
-                    <Card className="bg-zinc-900/50 border-zinc-800 lg:col-span-3 flex flex-col overflow-hidden">
+                    <Card className="bg-zinc-900/50 border-zinc-800 lg:col-span-3 flex flex-col overflow-hidden h-full">
                         <CardHeader className="border-b border-zinc-800 pb-4">
                             <div className="flex items-center gap-3">
                                 <div className="h-10 w-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
@@ -183,9 +182,9 @@ export default function ChatPage() {
                             </div>
                         </CardHeader>
 
-                        <CardContent className="flex-1 flex flex-col p-0 min-h-0">
+                        <CardContent className="flex-1 flex flex-col p-0 min-h-0 overflow-hidden">
                             {/* Messages - scrollable area */}
-                            <div className="flex-1 overflow-y-auto p-4" ref={scrollRef}>
+                            <div className="flex-1 overflow-y-auto p-4 min-h-0" ref={scrollRef}>
                                 <div className="space-y-4">
                                     {messages.length === 0 && (
                                         <div className="text-center py-12">
