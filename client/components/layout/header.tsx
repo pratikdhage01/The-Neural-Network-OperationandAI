@@ -20,15 +20,6 @@ export function Header({ title, subtitle }: HeaderProps) {
             </div>
 
             <div className="flex items-center gap-4">
-                {/* Search */}
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                    <Input
-                        placeholder="Search..."
-                        className="w-64 bg-zinc-900 border-zinc-800 pl-9 text-sm placeholder:text-zinc-500 focus:border-violet-500"
-                    />
-                </div>
-
                 {/* Notifications */}
                 <button className="relative rounded-lg p-2 text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors">
                     <Bell className="h-5 w-5" />

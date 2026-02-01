@@ -111,6 +111,21 @@ export default function ChatPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
                     {/* Conversations List */}
                     <Card className="bg-zinc-900/50 border-zinc-800">
+                        {/* WhatsApp QR Section */}
+                        <div className="p-4 border-b border-zinc-800">
+                            <div className="text-center">
+                                <p className="text-xs text-zinc-400 mb-2">Scan to chat via WhatsApp</p>
+                                <div className="bg-white rounded-lg p-2 inline-block">
+                                    <img
+                                        src="/qr twilio.svg"
+                                        alt="WhatsApp QR Code"
+                                        className="w-32 h-32"
+                                    />
+                                </div>
+                                <p className="text-xs text-zinc-500 mt-2">Or use the chat below</p>
+                            </div>
+                        </div>
+
                         <CardHeader className="pb-2">
                             <div className="flex items-center justify-between">
                                 <CardTitle className="text-lg font-medium text-white">Conversations</CardTitle>
@@ -120,7 +135,7 @@ export default function ChatPage() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <ScrollArea className="h-[calc(100vh-14rem)]">
+                            <ScrollArea className="h-[calc(100vh-24rem)]">
                                 <div className="space-y-2">
                                     {conversations.map((conv) => (
                                         <div

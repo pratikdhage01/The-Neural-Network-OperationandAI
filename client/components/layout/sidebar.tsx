@@ -64,7 +64,7 @@ export function Sidebar() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-purple-600">
                     <Package className="h-4 w-4 text-white" />
                 </div>
-                <span className="text-lg font-semibold text-white">MSME Central</span>
+                <span className="text-lg font-semibold text-white">ManageX</span>
             </div>
 
             {/* Main Navigation */}
@@ -91,7 +91,7 @@ export function Sidebar() {
                     </div>
 
                     {/* Info Note */}
-                    <div className="mt-3 mx-1 p-2.5 bg-zinc-800/50 rounded-lg border border-zinc-700/50 h-60 overflow-y-auto">
+                    <div className="mt-3 p-2 bg-zinc-800/50 rounded-lg border border-zinc-700/50 h-60 overflow-y-auto">
                         <div className="flex items-start gap-2">
                             <Info className="h-3.5 w-3.5 text-zinc-500 mt-0.5 shrink-0" />
                             <p className="text-xs text-zinc-500 leading-relaxed">
@@ -111,17 +111,6 @@ export function Sidebar() {
                         </div>
                     </div>
                 </div>
-            </div>
-
-            {/* Bottom section */}
-            <div className="absolute bottom-4 left-4 right-4">
-                <Link
-                    href="/dashboard/settings"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-400 hover:bg-zinc-800/50 hover:text-white transition-all duration-200"
-                >
-                    <Settings className="h-4 w-4" />
-                    Settings
-                </Link>
             </div>
         </aside>
     );
