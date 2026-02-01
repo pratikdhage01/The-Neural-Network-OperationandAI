@@ -134,7 +134,6 @@ export default function StaffPage() {
                                         <div className="flex justify-between items-center">
                                             <div>
                                                 <p className="text-sm font-medium text-white">{item.staff_name}</p>
-                                                <p className="text-xs text-zinc-500">{item.role}</p>
                                             </div>
                                             <span className={`text-sm font-medium ${getUtilizationColor(item.utilization_percent)}`}>
                                                 {item.current_tasks}/{item.max_capacity} ({item.utilization_percent.toFixed(0)}%)
@@ -169,7 +168,6 @@ export default function StaffPage() {
                                                 </div>
                                                 <div>
                                                     <p className="text-sm font-medium text-white">{member.name}</p>
-                                                    <p className="text-xs text-zinc-500">{member.role}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
