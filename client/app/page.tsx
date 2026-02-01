@@ -63,6 +63,36 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative pt-20 pb-32">
+        {/* Floating WhatsApp QR Code */}
+        <div className="hidden lg:block absolute top-8 right-8 xl:right-24 z-20">
+          <div className="relative group">
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/30 to-emerald-500/30 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+
+            {/* Card */}
+            <div className="relative bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-6 w-6 rounded-full bg-green-500 flex items-center justify-center">
+                  <MessageSquare className="h-3.5 w-3.5 text-white" />
+                </div>
+                <span className="text-sm font-medium text-white">Try via WhatsApp</span>
+              </div>
+
+              <div className="bg-white flex justify-center items-center rounded-xl p-2 py-4 mb-3">
+                <img
+                  src="/qr twilio.svg"
+                  alt="WhatsApp QR Code"
+                  className="w-28 h-28"
+                />
+              </div>
+
+              <p className="text-xs text-zinc-400 text-center">
+                Scan to chat with our AI
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col items-center text-center">
             {/* Badge */}
@@ -355,8 +385,8 @@ function ChatBubble({ role, message }: { role: 'user' | 'assistant'; message: st
   return (
     <div className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'}`}>
       <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${role === 'user'
-          ? 'bg-violet-600 text-white rounded-br-none'
-          : 'bg-zinc-800 text-zinc-100 rounded-bl-none'
+        ? 'bg-violet-600 text-white rounded-br-none'
+        : 'bg-zinc-800 text-zinc-100 rounded-bl-none'
         }`}>
         {message}
       </div>
