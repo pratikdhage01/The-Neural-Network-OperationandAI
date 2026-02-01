@@ -1,0 +1,13 @@
+============================================================
+POTENTIAL CONSUMERS
+============================================================
+
+Client ID: CLIENT_005
+Name: David Thompson
+Email: d.thompson@manufacturing.com
+Phone: +1-555-0105
+Company: Thompson Manufacturing
+Industry: Manufacturing
+Conversation Summary: CONTINUE
+------------------------------------------------------------
+

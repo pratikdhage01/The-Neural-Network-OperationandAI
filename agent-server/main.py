@@ -15,6 +15,8 @@ from api.routes.inventory import router as inventory_router
 from api.routes.suppliers import router as suppliers_router
 from api.routes.staff import router as staff_router
 from api.routes.analytics import router as analytics_router
+from api.routes.leads import router as leads_router
+from whatsapp import router as whatsapp_router
 
 
 @asynccontextmanager
@@ -56,6 +58,8 @@ app.include_router(inventory_router)
 app.include_router(suppliers_router)
 app.include_router(staff_router)
 app.include_router(analytics_router)
+app.include_router(leads_router)
+app.include_router(whatsapp_router)
 
 
 @app.get("/")
@@ -71,7 +75,9 @@ async def root():
             "inventory": "/api/inventory",
             "suppliers": "/api/suppliers",
             "staff": "/api/staff",
-            "analytics": "/api/analytics"
+            "analytics": "/api/analytics",
+            "leads": "/api/leads",
+            "whatsapp": "/whatsapp/webhook"
         }
     }
 

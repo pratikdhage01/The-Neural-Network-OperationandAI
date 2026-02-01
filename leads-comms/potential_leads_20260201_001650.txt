@@ -1,0 +1,13 @@
+============================================================
+POTENTIAL CONSUMERS
+============================================================
+
+Client ID: CLIENT_002
+Name: Sarah Mitchell
+Email: sarah.mitchell@retailmax.com
+Phone: +1-555-0102
+Company: RetailMax Solutions
+Industry: Retail
+Conversation Summary: i am interested in your soln
+------------------------------------------------------------
+

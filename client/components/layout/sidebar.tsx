@@ -13,6 +13,7 @@ import {
     MessageSquare,
     MessagesSquare,
     Settings,
+    Target,
 } from 'lucide-react';
 
 const navItems = [
@@ -24,6 +25,7 @@ const navItems = [
     { href: '/dashboard/bottlenecks', label: 'Bottlenecks', icon: AlertTriangle },
     { href: '/dashboard/chat', label: 'Consumer Chat', icon: MessageSquare },
     { href: '/dashboard/supplier-chat', label: 'Supplier Chat', icon: MessagesSquare },
+    { href: '/dashboard/leads', label: 'Leads', icon: Target },
 ];
 
 export function Sidebar() {
