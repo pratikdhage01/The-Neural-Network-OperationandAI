@@ -46,12 +46,6 @@ export default function HomePage() {
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
-              <Link href="/dashboard/chat">
-                <Button size="lg" variant="outline" className="border-zinc-700 hover:bg-zinc-800">
-                  <MessageSquare className="h-5 w-5 mr-2" />
-                  Try AI Chat
-                </Button>
-              </Link>
             </div>
           </div>
         </div>
